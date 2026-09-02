@@ -1,0 +1,63 @@
+using TMPro;
+using Unity.Mathematics;
+using UnityEngine;
+
+
+[RequireComponent(typeof(Rigidbody))]
+public class PlayerMove : MonoBehaviour
+{
+    private PlayerAction _playerAction;
+    private Rigidbody _rigidbody;
+    private Vector2 _inputDirection;
+    private Vector3 _newDirection;
+    private float _angle;
+    [SerializeField] private float _speedMove;
+    [SerializeField] private float _sensetive;
+
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+
+        _playerAction = new PlayerAction();
+        _playerAction.Enable();
+
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    void FixedUpdate()
+    {
+        _inputDirection = _playerAction.Mover.Move.ReadValue<Vector2>();
+        Move();
+    }
+
+    private void OnDisable()
+    {
+        _playerAction.Disable();
+        Rotate();
+    }
+
+    private void Move()
+    {
+        transform.Translate(_inputDirection.x * _speedMove * Time.fixedDeltaTime, _inputDirection.y * _speedMove * Time.fixedDeltaTime, 0);
+    }
+
+
+    // Для плавного поворота
+    private void Rotate()
+    {
+        
+        _newDirection = new Vector3(_inputDirection.x, _inputDirection.y, 0).normalized;
+
+        if (_newDirection.magnitude >= 0.1f)
+        {
+            float targetAngle = Mathf.Atan2(_newDirection.x, _newDirection.y) * Mathf.Rad2Deg;
+            _angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _sensetive, 0.2f);
+            transform.rotation = Quaternion.Euler(0, _angle, 0);
+            //Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
+        }
+       
+        
+
+        //Quaternion.RotateTowards(transform.rotation, targetRotation, _sensetive * Time.deltaTime);
+    }
+}
