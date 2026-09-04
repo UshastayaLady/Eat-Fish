@@ -11,6 +11,7 @@ public class PlayerMove : MonoBehaviour
     private Vector2 _inputDirection;
     private Vector3 _newDirection;
     private float _angle;
+    [SerializeField] private float _rotationTime;
     [SerializeField] private float _speedMove;
     [SerializeField] private float _sensetive;
 
@@ -28,17 +29,18 @@ public class PlayerMove : MonoBehaviour
     {
         _inputDirection = _playerAction.Mover.Move.ReadValue<Vector2>();
         Move();
+        Rotate();
     }
 
     private void OnDisable()
     {
         _playerAction.Disable();
-        Rotate();
+        
     }
 
     private void Move()
     {
-        transform.Translate(_inputDirection.x * _speedMove * Time.fixedDeltaTime, _inputDirection.y * _speedMove * Time.fixedDeltaTime, 0);
+        transform.Translate(_inputDirection.x * _speedMove * Time.fixedDeltaTime, 0, _inputDirection.y * _speedMove * Time.fixedDeltaTime);
     }
 
 
@@ -46,18 +48,14 @@ public class PlayerMove : MonoBehaviour
     private void Rotate()
     {
         
-        _newDirection = new Vector3(_inputDirection.x, _inputDirection.y, 0).normalized;
+        _newDirection = new Vector3(_inputDirection.x, 0, _inputDirection.y).normalized;
 
         if (_newDirection.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(_newDirection.x, _newDirection.y) * Mathf.Rad2Deg;
-            _angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _sensetive, 0.2f);
+            _angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _sensetive, _rotationTime);
             transform.rotation = Quaternion.Euler(0, _angle, 0);
-            //Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
         }
        
-        
-
-        //Quaternion.RotateTowards(transform.rotation, targetRotation, _sensetive * Time.deltaTime);
     }
 }
