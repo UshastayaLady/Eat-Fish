@@ -55,7 +55,7 @@ public class PlayerMove : MonoBehaviour
     private void Rotate()
     {
         
-        _newDirection = new Vector3(_inputDirection.x, transform.position.y, _inputDirection.y).normalized;
+        _newDirection = new Vector3(_inputDirection.x, 0f, _inputDirection.y).normalized;
 
         if (_newDirection.magnitude >= 0.1f)
         {
