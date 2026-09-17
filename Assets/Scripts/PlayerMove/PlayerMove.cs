@@ -12,7 +12,7 @@ public class PlayerMove : MonoBehaviour
 
     [SerializeField] private float _rotationTime;
     [SerializeField] private float _speedMove;
-    [SerializeField] private float _sensetive;
+    private float _rotationVelocity;
 
     void Start()
     {
@@ -60,7 +60,7 @@ public class PlayerMove : MonoBehaviour
         if (_newDirection.magnitude >= 0.1f)
         {
             float targetAngle = Mathf.Atan2(_newDirection.x, _newDirection.z) * Mathf.Rad2Deg;
-            _angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _sensetive, _rotationTime);
+            _angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _rotationVelocity, _rotationTime);
             transform.rotation = Quaternion.Euler(0, _angle, 0);
         }
        

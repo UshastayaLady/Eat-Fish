@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
 {
-    private Queue<Enemy> _enemies;
-    private int _lvlEnemies;
+    private Queue<EnemyStats> _enemies;
+    private int _lvlPlayr;
     public static ObjectPool Instance { get; private set; }
         
     void Awake()
@@ -16,9 +16,7 @@ public class ObjectPool : MonoBehaviour
         }
 
         Instance = this;
-
-        _lvlEnemies = 3;
-        _enemies = new Queue<Enemy>();
+        _enemies = new Queue<EnemyStats>();
     }
 
     private void OnEnable()
@@ -26,13 +24,13 @@ public class ObjectPool : MonoBehaviour
         PlayerStats.Instance.LvlRisen += ClearQueue;
     }
 
-    public void PutEnemy(Enemy enemy)
+    public void PutEnemy(EnemyStats enemy)
     {
         enemy.transform.parent = this.transform;
         _enemies.Enqueue(enemy);
     }
 
-    public Enemy TakeEnemy()
+    public EnemyStats TakeEnemy()
     {
         if (_enemies.Count > 0)
             return _enemies.Dequeue();
@@ -41,25 +39,25 @@ public class ObjectPool : MonoBehaviour
 
     }
 
-    private void ClearQueue()
+    private void ClearQueue(int lvlPlayr)
     {
         int count = _enemies.Count;
         for (int i = 0; i < count; i++)
         {
-            Enemy enemy = _enemies.Dequeue();
+            EnemyStats enemy = _enemies.Dequeue();
             enemy.DestroyEnemy();
         }
-        _lvlEnemies++;
+        _lvlPlayr = lvlPlayr;
     }
 
-    private Enemy CreateFish()
+    private EnemyStats CreateFish()
     {
-        FishScriptableObject fishData = CreateEnemyForLvl.Instance.GetEnemy(_lvlEnemies);
+        FishScriptableObject fishData = CreateEnemyForLvl.Instance.GetEnemy(_lvlPlayr);
 
         GameObject enemyObject = Instantiate(fishData.Model);
 
 
-        Enemy enemy = enemyObject.GetComponent<Enemy>();
+        EnemyStats enemy = enemyObject.GetComponent<EnemyStats>();
 
         enemy.InitializationFish(fishData);
 

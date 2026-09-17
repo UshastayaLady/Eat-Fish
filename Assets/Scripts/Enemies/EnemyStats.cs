@@ -1,23 +1,13 @@
 using UnityEngine;
 
-public class Enemy : Fish
+public class EnemyStats : Fish
 {
     [SerializeField] private FishScriptableObject _scriptableObject;
     private bool _isDestroying = false;
 
-    private void Awake()
-    {
-        GetComponent<MeshCollider>().convex = true;
-    }
-
     public void InitializationFish(FishScriptableObject scriptable)
     {
-        _name = scriptable.FishName;
-        _textName.text = _name;
-
         _lvl = scriptable.Lvl; 
-        _textLvl.text = _lvl.ToString();
-
         _score = scriptable.Score;
     }
     protected override void Death()

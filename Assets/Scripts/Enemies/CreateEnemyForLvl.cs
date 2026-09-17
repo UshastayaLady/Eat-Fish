@@ -24,13 +24,19 @@ public class CreateEnemyForLvl : MonoBehaviour
         }
     }
 
-    public FishScriptableObject GetEnemy(int lvl)
+    public FishScriptableObject GetEnemy(int lvlPlayr)
     {
-        if (lvl > _constMaxLvlEnemies - 2)
-            lvl = _constMaxLvlEnemies - 2;
-
-        _minLvl = lvl - 2;
-        _maxLvl = lvl + 2;
+        if (lvlPlayr > _constMaxLvlEnemies - 2)
+        {
+            _maxLvl = _constMaxLvlEnemies;
+            _minLvl = _constMaxLvlEnemies - 4;
+        }
+        else 
+        {
+            _maxLvl = lvlPlayr + 2;
+            _minLvl = lvlPlayr - 2;
+        }
+               
 
         List<FishScriptableObject> availableEnemies =
             new List<FishScriptableObject>();

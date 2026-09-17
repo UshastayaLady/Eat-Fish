@@ -1,14 +1,13 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerStats : Fish
 {
     [SerializeField] private int _scoreForNextLvl;
-    [SerializeField] private Text _textScoreForNextLvl;
     private const int constForSpeed = 2500;
 
-    public event Action LvlRisen;
+    public event Action<int> LvlRisen;
+    public event Action<float> ScoreUpdated;
 
     public static PlayerStats Instance { get; private set; }
       
@@ -22,16 +21,24 @@ public class PlayerStats : Fish
         {
             Instance = this;
         }
+    }
 
-        _textName.text = _name;
-        _textLvl.text = "Уровень: " + _lvl.ToString();
-        _textScoreForNextLvl.text = _score.ToString() + " / " + _scoreForNextLvl.ToString();
+    private void Start()
+    {
+        LvlRisen?.Invoke(_lvl);
+        ScoreUpdated?.Invoke(TakeProgressScore());
     }
      
     public void AddScore(int score)
     {
-        _score += score;        
+        _score += score;
         CheckScore();
+    }
+    private float TakeProgressScore()
+    {
+        if (_scoreForNextLvl <= 0)
+            return 0f;
+        return Mathf.Clamp01((float)_score / _scoreForNextLvl);
     }
 
     private void CheckScore()
@@ -40,8 +47,7 @@ public class PlayerStats : Fish
         {
             LvlUp();
         }
-
-        _textScoreForNextLvl.text = _score.ToString() + " / " + _scoreForNextLvl.ToString();
+        ScoreUpdated?.Invoke(TakeProgressScore());
     }
 
     private void LvlUp()
@@ -59,9 +65,7 @@ public class PlayerStats : Fish
                 * Mathf.Pow( ((_lvl + 19) / 30f), 2));
         }
         
-        LvlRisen?.Invoke();
-
-        _textLvl.text = "Уровень: " + _lvl.ToString();
+        LvlRisen?.Invoke(_lvl);
     }
 
     protected override void Death()
